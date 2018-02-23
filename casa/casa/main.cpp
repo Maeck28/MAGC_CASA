@@ -9,7 +9,7 @@
 void InitGL ( GLvoid )     // Inicializamos parametros
 {
 	//glShadeModel(GL_FLAT);							// Habilitamos Smooth Shading
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);				// Negro de fondo
+	glClearColor(255.0f, 255.0f, 0.0f, 0.0f);				// Negro de fondo
 	//glClearDepth(1.0f);									// Configuramos Depth Buffer
 	//glEnable(GL_DEPTH_TEST);							// Habilitamos Depth Testing
 	//glDepthFunc(GL_LEQUAL);								// Tipo de Depth Testing a realizar
@@ -23,52 +23,60 @@ void display ( void )   // Creamos la funcion donde se dibuja
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();									// Reinicializamos la actual matriz Modelview
 	//
-	glBegin(GL_LINE_LOOP);
-
 	
-	glVertex3f(1, 9, -1.2);
-	glVertex3f(9, 9, -1.2);
-	glVertex3f(9, 7, -1.2);
-	glVertex3f(3, 7, -1.2);
-	glVertex3f(3, 3, -1.2);
-	glVertex3f(9, 3, -1.2);
-	glVertex3f(9, 1, -1.2);
-	glVertex3f(1, 1, -1.2);
+	glBegin(GL_TRIANGLES);
+	glColor3f(255,0,0);
 
-
+	glVertex3f(2, 0, -1.2);
+	glVertex3f(4.7, 2, -1.2);
+	glVertex3f(2.5, 2, -1.2);
+	
 
 	glEnd();
 
-	glBegin(GL_POLYGON);
-
-
-	glVertex3f(1, 9, -1.2);
-	glVertex3f(9, 9, -1.2);
-	glVertex3f(9, 7, -1.2);
-	glVertex3f(1, 7, -1.2);
-
+	glBegin(GL_TRIANGLES);
+	glColor3f(255, 0, 0);
+	glVertex3f(7.5,0, -1.2);
+	glVertex3f(6.8,2, -1.2);
+	glVertex3f(4.7,2, -1.2);
+	
 	glEnd();
 
-	glBegin(GL_POLYGON);
+	glBegin(GL_TRIANGLES);
+	glColor3f(255, 0, 0);
 
-
-	glVertex3f(1, 9, -1.2);
-	glVertex3f(3, 9, -1.2);
-	glVertex3f(3, 1, -1.2);
-	glVertex3f(1, 1, -1.2);
+	glVertex3f(6.5,3.3, -1.2);
+	glVertex3f(9.2,5.5, -1.2);
+	glVertex3f(6, 5.5, -1.2);
 
 	glEnd();
 	
-	glBegin(GL_POLYGON);
+	glBegin(GL_TRIANGLES);
 
+	glColor3f(255, 0, 0);
+	glVertex3f(6,5.5, -1.2);
+	glVertex3f(4.7, 8.5, -1.2);
+	glVertex3f(3.5,5.5, -1.2);
+	
+	glEnd();
 
-	glVertex3f(1, 1, -1.2);
-	glVertex3f(1, 3, -1.2);
-	glVertex3f(9, 3, -1.2);
-	glVertex3f(9, 1, -1.2);
+	glBegin(GL_TRIANGLES);
+
+	glColor3f(255, 0, 0);
+	glVertex3f(3.5, 5.5, -1.2);
+	glVertex3f(0.5,5.5, -1.2);
+	glVertex3f(3,3.3, -1.2);
 
 	glEnd();
 
+	glBegin(GL_POLYGON);
+	glColor3f(255, 0, 0);
+	glVertex3f(2.5, 2, -1.2);
+	glVertex3f(6.8, 2, -1.2);
+	glVertex3f(6,5.5, -1.2);
+	glVertex3f(3.5, 5.5, -1.2);
+
+	glEnd();
 
 	glFlush();
 
@@ -87,7 +95,7 @@ void reshape ( int width , int height )   // Creamos funcion Reshape
 	glLoadIdentity();
 
 	// Ortogonal
-	glOrtho(-10,15,-10,15,0.1,2);
+	glOrtho(-10,10,-10,10,0.1,2);
 
 	glMatrixMode(GL_MODELVIEW);							// Seleccionamos Modelview Matrix
 	glLoadIdentity();									
