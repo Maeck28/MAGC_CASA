@@ -1,3 +1,4 @@
 ﻿  main.cpp
+c:\users\marco\desktop\magc_casa\casa\casa\main.cpp(46): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
   casa.vcxproj -> C:\Users\Marco\Desktop\MAGC_CASA\casa\Debug\casa.exe
   casa.vcxproj -> C:\Users\Marco\Desktop\MAGC_CASA\casa\Debug\casa.pdb (Full PDB)
