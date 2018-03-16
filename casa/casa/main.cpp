@@ -1,4 +1,4 @@
-///      Semestre 2018 - 2
+//      Semestre 2018 - 2
 //************************************************************//
 //************************************************************//
 //************** Alumno (s): *********************************//
@@ -9,7 +9,26 @@
 //#include <gl/gl.h>     // The GL Header File
 //#include <GL/glut.h>   // The GL Utility Toolkit (Glut) Header
 //#include <stdlib.h
+
+// LOS OBJETOS SE MUEVEN CON MAYUSCULAS Y MINUSCULAS
+//EL HOMBRO SE MUEVE CON LA LETRA H 
+// CODO CON LA LETRA C
+//MUÑECA CON LA LETRA M
+// DEDO PULGAR CON O
+// DEDO INDICE CON I
+// DEDO MEDIO CON U
+// DEDO ANULAR Y
+// DEDO MEÑIQUE CON T
+
 #include "Main.h"
+float angHombro = 0.0f;
+float angCodo = 0.0f;
+float angMuni = 0.0f;
+float angDedP = 0.0f;
+float angDedI = 0.0f;
+float angMed = 0.0;
+float angAn = 0.0;
+float angMe = 0.0;
 
 float transZ = -5.0f;
 int screenW = 0.0;
@@ -104,85 +123,470 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 	//Poner Código Aquí.
 
+	//cabeza
+	glPushMatrix();
+	glScalef(4, 4, 4);
+	glColor3f(1, 1, 1);
+	prisma();
+	glPopMatrix();
+
+	//ojos
+	glPushMatrix();
+	glTranslatef(-0.5, 0 , 2);
+	glScalef(.52, .52, .1);
+	glColor3f(0, .1, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.5, 0, 2);
+	glScalef(.52, .52, .1);
+	glColor3f(0, .1, 1);
+	prisma();
+	glPopMatrix();
+
+	glTranslatef(0, -3, 0);
+	
+	//cuello
+	glPushMatrix();
+	glScalef(3, 2, 3);
+	glColor3f(1, 0, 0);
+	prisma();
+	glPopMatrix();
+
+	glTranslatef(0, -6, 0);
 	//torso
 	glPushMatrix();
-	glScalef(5, 3, 3);
-	glColor3f(.97, .90 , .62);
-	prisma();
-	glPopMatrix();
-			// patas
-		//patas delatenras
-		
-	//pata derecha	
-	glTranslatef(-2, -2, -1);
-	glPushMatrix();
-	glScalef(1, 1, 1);
-	glColor3f(.94, .69, .47);
-	prisma();
-	glPopMatrix();
-	//pata izquierda
-	glTranslatef(0, 0, 2);
-	glPushMatrix();
-	glScalef(1, 1, 1);
-	glColor3f(.94, .69, .47);
-	prisma();
-	glPopMatrix();
-		//patas traseras
-	 //pata izquierda	
-	glTranslatef(4, 0, 0);
-	glPushMatrix();
-	glScalef(1, 1, 1);
-	glColor3f(.94, .69, .47);
-	prisma();
-	glPopMatrix();
-	// pata derecha
-	//pata izquierda
-	glTranslatef(0, 0, -2);
-	glPushMatrix();
-	glScalef(1, 1, 1);
-	glColor3f(.94, .69, .47);
-	prisma();
-	glPopMatrix();
-		//colita
-		
-	glTranslatef(.5, 3, 1);
-	glPushMatrix();
-	glScalef(1, .5, .5);
-	glColor3f(.94, .69, .47);
+	glScalef(10, 10, 3);
+	glColor3f(0, 0, 1);
 	prisma();
 	glPopMatrix();
 
-		//cabeza
-	glTranslatef(-4.5, 1.5, 0);
+	//pierna izquierda
+	//muslo
+	glTranslatef(2.5, -7.5, 0);
+
 	glPushMatrix();
-	glScalef(3, 3, 3);
-	glColor3f(.97, .90, .62);
+	glScalef(2, 5, 3);
+	glColor3f(1, 1, 0);
 	prisma();
 	glPopMatrix();
 
-	   //trompita
-	glTranslatef(-1.5, 0.0, 0);
+	glTranslatef(0, -3, 0);
+	//rodilla
 	glPushMatrix();
-	glScalef(.5, 1.5, 1.5);
-	glColor3f(.47, .25, .07);
+	glScalef(2, 1, 3);
+	glColor3f(1, 0, 1);
 	prisma();
 	glPopMatrix();
-		//orejas
-	//izquierda
-	glTranslatef(1.5, 1.75, 1);
+
+	glTranslatef(0, -3, 0);
+
+	//espinilla
 	glPushMatrix();
-	glScalef(.5, .5, .5);
-	glColor3f(.47, .25, .07);
+	glScalef(2, 5, 3);
+	glColor3f(1, 0.5, 0.5);
 	prisma();
 	glPopMatrix();
-	//derecha
-	glTranslatef(0, 0, -2);
+
+	glTranslatef(0, -2.75, 0);
+
+	//tobillo
 	glPushMatrix();
-	glScalef(.5, .5, .5);
-	glColor3f(.47, .25, .07);
+	glScalef(2, 0.5, 3);
+	glColor3f(1, 0, 0.5);
 	prisma();
 	glPopMatrix();
-		
+
+	glTranslatef(0, -1.25, 0);
+	//pie
+	glPushMatrix();
+	glScalef(2, 2, 3);
+	glColor3f(0.5, 0, 0.5);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, 0, 0);
+	glPopMatrix();
+
+	glTranslatef(3, 21.5, 0);
+
+	//brazo izquierdo
+	//Hombro
+	glPushMatrix();
+	glRotatef(angHombro, 0, 0, 1);
+	glPushMatrix();
+	glScalef(1, 2, 2);
+	glColor3f(1, 1, 1);
+	prisma();
+	glPopMatrix();
+
+	//Bicep
+	glPushMatrix();
+	glTranslatef(2, 0, 0);
+	glScalef(3, 2, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	//Codo
+	glRotatef(angCodo, 0, 1, 0);
+	glPushMatrix();
+	glTranslatef(3.75, 0, 0);
+	glScalef(0.5, 2, 2);
+	glColor3f(1, 0, 0);
+	prisma();
+	glPopMatrix();
+
+	//Antebrazo
+	glPushMatrix();
+	glTranslatef(6, 0, 0);
+	glScalef(4, 2, 2);
+	glColor3f(0, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	//Muñeca
+	glRotatef(angMuni, 0, 1, 0);
+	glPushMatrix();
+	glTranslatef(8.25, 0, 0);
+	glScalef(0.5, 2, 2);
+	glColor3f(1, 1, 1);
+	prisma();
+	glPopMatrix();
+
+	//Mano
+	glPushMatrix();
+	glTranslatef(9.5, 0, 0);
+	glScalef(2, 2, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+
+    //dedo pulgar
+	glPushMatrix();
+	glRotatef(angDedP, 1, 0, 0);
+	glTranslatef(9.75, 1.25, 0);
+	glScalef(.3,.5, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(angDedP, 1, 0, 0);
+	glTranslatef(9.75, 1.75, 0);
+	glScalef(.3, .5, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+	
+	//dedo indice
+	glPushMatrix();
+	glRotatef(angDedI, 0, 1, 0);
+	glTranslatef(10.75, .75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(angDedI, 0, 1, 0);
+	glTranslatef(11.25, .75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(angDedI, 0, 1, 0);
+	glTranslatef(11.75, .75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	//dedo medio
+	
+	glPushMatrix();
+	glRotatef(angMed, 0, 1, 0);
+	glTranslatef(10.75, .25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(angMed, 0, 1, 0);
+	glTranslatef(11.25, .25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(angMed, 0, 1, 0);
+	glTranslatef(11.75, .25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	//dedo anular
+	glPushMatrix();
+	glRotatef(angAn, 0, 1, 0);
+	glTranslatef(10.75, -.25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(angAn, 0, 1, 0);
+	glTranslatef(11.25, -.25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(angAn, 0, 1, 0);
+	glTranslatef(11.75, -.25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+	//meñique
+	glPushMatrix();
+	glRotatef(angMe, 0, 1, 0);
+	glTranslatef(10.75, -.75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(angMe, 0, 1, 0);
+	glTranslatef(11.25, -.75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	glPopMatrix();
+
+
+	//Brazo derecha
+	//Hombro
+	glPushMatrix();
+	glTranslatef(-11, 0, 0);
+	glRotatef(-angHombro, 0, 0, 1);
+	glPushMatrix();	
+	glScalef(1, 2, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	//Bicep
+	glPushMatrix();
+	glTranslatef(-2, 0, 0);
+	glScalef(3, 2, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	//Codo
+	glRotatef(-angCodo, 0, 1, 0);
+	glPushMatrix();
+	glTranslatef(-3.75, 0, 0);
+	glScalef(0.5, 2, 2);
+	glColor3f(1, 0, 0);
+	prisma();
+	glPopMatrix();
+
+	//Antebrazo
+	glPushMatrix();
+	glTranslatef(-6, 0, 0);
+	glScalef(4, 2, 2);
+	glColor3f(0, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	//Muñeca
+	glRotatef(-angMuni, 0, 1, 0);
+	glPushMatrix();
+	glTranslatef(-8.25, 0, 0);
+	glScalef(0.5, 2, 2);
+	glColor3f(1, 1, 1);
+	prisma();
+	glPopMatrix();
+
+	//Mano
+	glPushMatrix();
+	glTranslatef(-9.5, 0, 0);
+	glScalef(2, 2, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	//dedo pulgar
+	glPushMatrix();
+	glRotatef(-angDedP, 1, 0, 0);
+	glTranslatef(-9.75, 1.25, 0);
+	glScalef(.3, .5, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-angDedP, 1, 0, 0);
+	glTranslatef(-9.75, 1.75, 0);
+	glScalef(.3, .5, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	//dedo indice
+	glPushMatrix();
+	glRotatef(-angDedI, 0, 1, 0);
+	glTranslatef(-10.75, .75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-angDedI, 0, 1, 0);
+	glTranslatef(-11.25, .75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-angDedI, 0, 1, 0);
+	glTranslatef(-11.75, .75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	//dedo medio
+
+	glPushMatrix();
+	glRotatef(-angMed, 0, 1, 0);
+	glTranslatef(-10.75, .25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-angMed, 0, 1, 0);
+	glTranslatef(-11.25, .25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-angMed, 0, 1, 0);
+	glTranslatef(-11.75, .25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	//dedo anular
+	glPushMatrix();
+	glRotatef(-angAn, 0, 1, 0);
+	glTranslatef(-10.75, -.25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-angAn, 0, 1, 0);
+	glTranslatef(-11.25, -.25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-angAn, 0, 1, 0);
+	glTranslatef(-11.75, -.25, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(0, 0, 1);
+	prisma();
+	glPopMatrix();
+	//meñique
+	glPushMatrix();
+	glRotatef(-angMe, 0, 1, 0);
+	glTranslatef(-10.75, -.75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-angMe, 0, 1, 0);
+	glTranslatef(-11.25, -.75, 0);
+	glScalef(.5, .3, 2);
+	glColor3f(1, 1, 0);
+	prisma();
+	glPopMatrix();
+	
+	glPopMatrix();
+
+
+	//pie derecho
+	//muslo
+
+	glTranslatef(-7.5, -11.5, 0);
+	glPushMatrix();
+	glScalef(2, 5, 3);
+	glColor3f(0.6, 0, 0.5);
+	prisma();
+	glPopMatrix();
+	glTranslatef(0, -3, 0);
+	//rodilla
+	glPushMatrix();
+	glScalef(2, 1, 3);
+	glColor3f(1, 0, 1);
+	prisma();
+	glPopMatrix();
+
+	glTranslatef(0, -3, 0);
+
+	//espinilla
+	glPushMatrix();
+	glScalef(2, 5, 3);
+	glColor3f(1, 0.5, 0.5);
+	prisma();
+	glPopMatrix();
+
+	glTranslatef(0, -2.75, 0);
+
+	//tobillo
+	glPushMatrix();
+	glScalef(2, 0.5, 3);
+	glColor3f(1, 0, 0.5);
+	prisma();
+	glPopMatrix();
+
+	glTranslatef(0, -1.25, 0);
+	//pie
+	glPushMatrix();
+	glScalef(2, 2, 3);
+	glColor3f(0.5, 0, 0.5);
+	prisma();
+	glPopMatrix();
+
+
+
+
 
 	glutSwapBuffers();
 	// Swap The Buffers
@@ -212,11 +616,11 @@ void keyboard(unsigned char key, int x, int y)  // Create Keyboard Function
 	switch (key) {
 	case 'w':
 	case 'W':
-		transZ += 0.8f;
+		transZ += 0.3f;
 		break;
 	case 's':
 	case 'S':
-		transZ -= 0.8f;
+		transZ -= 0.3f;
 		break;
 	case 'a':
 	case 'A':
@@ -224,7 +628,70 @@ void keyboard(unsigned char key, int x, int y)  // Create Keyboard Function
 		break;
 	case 'd':
 	case 'D':
-
+			break;
+	case 'h':
+		if (angHombro <= 80)
+			angHombro += 1;
+		break;
+	case 'H':
+		if (angHombro >= -80)
+			angHombro -= 1;
+		break;
+	case 'c':
+		if (angCodo <= 0)
+			angCodo += 1;
+		break;
+	case 'C':
+		if (angCodo >= -120)
+			angCodo -= 1;
+		break;
+	case 'm':
+		if (angMuni <= 0)
+			angMuni += 1;
+		break;
+	case 'M':
+		if (angMuni >= -70)
+			angMuni -= 1;
+		break;
+	case 'o':
+		if (angDedP <= 100)
+			angDedP += 1;
+		break;
+	case 'O':
+		if (angDedP >= 0)
+			angDedP -= 1;
+		break;
+	case 'i':
+		if (angDedI <= 0)
+			angDedI += 1;
+		break;
+	case 'I':
+		if (angDedI >= -100)
+			angDedI -= 1;
+		break;
+	case 'u':
+		if (angMed <= 0)
+			angMed += 1;
+		break;
+	case 'U':
+		if (angMed >= -100)
+			angMed -= 1;
+		break;
+	case 'y':
+		if (angAn <= 0)
+			angAn += 1;
+		break;
+	case 'Y':
+		if (angAn >= -100)
+			angAn -= 1;
+		break;
+	case 't':
+		if (angMe <= 0)
+			angMe += 1;
+		break;
+	case 'T':
+		if (angMe >= -100)
+			angMe -= 1;
 		break;
 	case 27:        // Cuando Esc es presionado...
 		exit(0);   // Salimos del programa
@@ -243,10 +710,10 @@ void arrow_keys(int a_keys, int x, int y)  // Funcion para manejo de teclas espe
 	case GLUT_KEY_DOWN:		// Presionamos tecla ABAJO...
 		break;
 	case GLUT_KEY_LEFT:
-		roty -= 0.8;
+		roty -= 0.5;
 		break;
 	case GLUT_KEY_RIGHT:
-		roty += 0.8;
+		roty += 0.5;
 		break;
 	default:
 		break;
@@ -264,7 +731,7 @@ int main(int argc, char** argv)   // Main Function
 	screenH = glutGet(GLUT_SCREEN_HEIGHT);
 	glutInitWindowSize(500, 500);	// Tamaño de la Ventana
 	glutInitWindowPosition(0, 0);	//Posicion de la Ventana
-	glutCreateWindow("Casa 4"); // Nombre de la Ventana
+	glutCreateWindow("Ejercicio Casa"); // Nombre de la Ventana
 	printf("Resolution H: %i \n", screenW);
 	printf("Resolution V: %i \n", screenH);
 	InitGL();						// Parametros iniciales de la aplicacion
@@ -276,5 +743,3 @@ int main(int argc, char** argv)   // Main Function
 
 	return 0;
 }
-
-
