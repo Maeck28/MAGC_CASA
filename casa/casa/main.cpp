@@ -1,76 +1,370 @@
-//      Semestre 2018 - 2
+//Semestre 2018 - 2
 //************************************************************//
 //************************************************************//
 //************** Alumno (s): *********************************//
-//*************		Guevara Chávez Marco Antonio//
-//*************	Version: Visual Studio 2015						******//
+//*************			Guevara Chávez Marco A.								******//
+//*************				Version visual 2015							******//
 //************************************************************//
+//************************  La animación se realiza con la tecla "m" minuscula	************************************//
+
 
 #include "texture.h"
+#include "figuras.h"
+#include "Camera.h"
 
-float pos_camX = 0, pos_camY = 0, pos_camZ = -5;
-int eye_camX = 0, eye_camY = 0.0, eye_camZ = 0;
+#include "cmodel/CModel.h"
+
+//NEW//////////////////NEW//////////////////NEW//////////////////NEW////////////////
+static GLuint ciudad_display_list;	//Display List for the Monito
 
 
+									//NEW// Keyframes
+
+float pulg = 0.0;
+float angPulgar = 0.0;
+float Movdedos = 0.0;
+float Movdedos1 = 0.0;
+float Movdedos2 = 0.0;
+float tije = 0.0;
+float tije1 = 0.0;
+
+
+#define MAX_FRAMES 20  // Cuantos cuadros capturamos por segundo
+int i_max_steps = 90;
+int i_curr_steps = 0;
+typedef struct _frame  // Debemos declarar la variable y otra que es su incremento
+{
+	//Variables para GUARDAR Key Frames
+	float posX;		//Variable para PosicionX
+	float posY;		//Variable para PosicionY
+	float posZ;		//Variable para PosicionZ
+	float incX;		//Variable para IncrementoX
+	float incY;		//Variable para IncrementoY
+	float incZ;		//Variable para IncrementoZ
+	
+	float transZ = -5.0f;
+	float transX = 0.0f;
+	float angleX = 0.0f;
+	float angleY = 0.0f;
+	int screenW = 0.0;
+	int screenH = 0.0;
+	float pulg = 0.0;
+	float Movdedos = 0.0;
+	float Movdedos1 = 0.0;
+	float Movdedos2 = 0.0;
+	float pulgInc = 0.0;
+	float dedosInc = 0.0;
+	float dedos1Inc = 0.0;
+	float dedos2Inc = 0.0;
+	float tije = 0.0;
+	float tije1 = 0.0;
+	float tijeInc = 0.0;
+	float tije1Inc = 0.0;
+
+}FRAME;
+
+FRAME KeyFrame[MAX_FRAMES];
+int FrameIndex = 20;			//introducir datos
+bool play = false;  //Play en falso
+int playIndex = 0;
+
+
+//NEW//////////////////NEW//////////////////NEW//////////////////NEW////////////////
+
+int w = 500, h = 500;
+int frame = 0, time, timebase = 0;
+char s[30];
+
+CCamera objCamera;	//Create objet Camera
+
+GLfloat g_lookupdown = 0.0f;    // Look Position In The Z-Axis (NEW) 
+
+int font = (int)GLUT_BITMAP_HELVETICA_18;
+
+//Otras opciones son:
+/*GLUT_BITMAP_8_BY_13
+GLUT_BITMAP_9_BY_15
+GLUT_BITMAP_TIMES_ROMAN_10
+GLUT_BITMAP_TIMES_ROMAN_24
+GLUT_BITMAP_HELVETICA_10
+GLUT_BITMAP_HELVETICA_12
+GLUT_BITMAP_HELVETICA_18*/
+
+
+
+//GLfloat Diffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };				// Diffuse Light Values
 GLfloat Diffuse[] = { 0.5f, 0.5f, 0.5f, 1.0f };				// Diffuse Light Values
 GLfloat Specular[] = { 1.0, 1.0, 1.0, 1.0 };				// Specular Light Values
-GLfloat Position[] = { 0.0f, 3.0f, 0.0f, 1.0f };			// Light Position
-GLfloat Position2[] = { 0.0f, -5.0f, 0.0f, 1.0f };			// Light Position
+GLfloat Position[] = { 0.0f, 7.0f, -5.0f, 0.0f };			// Light Position
+GLfloat Position2[] = { 0.0f, 0.0f, -5.0f, 1.0f };			// Light Position
+
+GLfloat ManoDiffuse[] = { 1.0, 0.4, 0.250, 1.0f };			// Jupiter
+GLfloat ManoSpecular[] = { 1.0, 0.5, 0.0, 1.0 };
+GLfloat ManoShininess[] = { 50.0 };
+
+GLfloat m_dif1[] = { 0.0f, 0.2f, 1.0f, 1.0f };				// Diffuse Light Values
+GLfloat m_spec1[] = { 0.0, 0.0, 0.0, 1.0 };				// Specular Light Values
+GLfloat m_amb1[] = { 0.0, 0.0, 0.0, 1.0 };				// Ambiental Light Values
+GLfloat m_s1[] = { 18 };
+
+GLfloat m_dif2[] = { 0.8f, 0.2f, 0.0f, 1.0f };				// Diffuse Light Values
+GLfloat m_spec2[] = { 0.0, 0.0, 0.0, 1.0 };				// Specular Light Values
+GLfloat m_amb2[] = { 0.0, 0.0, 0.0, 1.0 };				// Ambiental Light Values
+GLfloat m_s2[] = { 22 };
+
+CTexture text1;
+CTexture text2;
+CTexture text3;	//Flecha
+CTexture text4;	//Pavimento
+CTexture text5;	//Pasto01
+CTexture text6;	//Casa01
+
+CTexture tree;
+
+CFiguras fig1;
+CFiguras fig2;
+CFiguras fig3;
+CFiguras fig4;	//Pasto01
+CFiguras fig5;	//Casa01
+CFiguras fig6;
+CFiguras fig7;	//Para crear Monito
+
+				//Figuras de 3D Studio
+CModel kit;
+CModel llanta;
+
+//Animación del coche
+float angRot = 0.0;
+float movKitX = 0.0;
+float movKitZ = 0.0;
+float rotKit = 0.0;
+float rotTires = 0.0;
+bool g_fanimacion = false;
+bool g_avanza = false;
+
+bool circuito = false;
+bool recorrido1 = true;
+bool recorrido2 = false;
+bool recorrido3 = false;
+bool recorrido4 = false;
+bool recorrido5 = false;
+
+int timer = 0;
 
 
-CTexture t_Ajedrez1;
-CTexture t_Ajedrez2;
-CTexture t_metal01;
-CTexture t_madera;
-CTexture t_Ajedrez3;
-CTexture t_madera1;
 
 
-int font = (int)GLUT_BITMAP_TIMES_ROMAN_24;
+GLuint createDL()
+{
+	GLuint ciudadDL;
+	//GLuint cieloDL;
 
+	// Create the id for the list
+	ciudadDL = glGenLists(1);
+	// start list
+	glNewList(ciudadDL, GL_COMPILE);
+	// call the function that contains 
+	// the rendering commands
+	;
+	//monito();
+	// endList
+	glEndList();
 
+	return(ciudadDL);
+}
 
 void InitGL(GLvoid)     // Inicializamos parametros
 {
-	glClearColor(0.5f, 0.5f, 0.8f, 0.0f);				// Azul de fondo	
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);				// Negro de fondo	
 
 	glEnable(GL_TEXTURE_2D);
 
-	//glShadeModel (GL_SMOOTH);
-	glLightfv(GL_LIGHT0, GL_POSITION, Position);
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, Position2);
+	glShadeModel(GL_SMOOTH);
+	//Para construir la figura comentar esto
+	glLightfv(GL_LIGHT1, GL_POSITION, Position);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, Diffuse);
+	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, Position2);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	//glEnable(GL_LIGHT1);
 
+	//glEnable ( GL_COLOR_MATERIAL );
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+	//glPolygonMode(GL_BACK, GL_LINE);
 
 	glClearDepth(1.0f);									// Configuramos Depth Buffer
 	glEnable(GL_DEPTH_TEST);							// Habilitamos Depth Testing
 	glDepthFunc(GL_LEQUAL);								// Tipo de Depth Testing a realizar
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	t_Ajedrez1.LoadTGA("01.tga");
-	t_Ajedrez1.BuildGLTexture();
-	t_Ajedrez1.ReleaseImage();
+	glEnable(GL_AUTO_NORMAL);
+	glEnable(GL_NORMALIZE);
 
-	t_metal01.LoadBMP("metal2.bmp");
-	t_metal01.BuildGLTexture();
-	t_metal01.ReleaseImage();
+	/* setup blending */
+	//glBlendFunc(GL_SRC_ALPHA,GL_ONE);			// Set The Blending Function For Translucency
+	//glColor4f(1.0f, 1.0f, 1.0f, 0.5); 
 
-	t_Ajedrez2.LoadTGA("02.tga");
-	t_Ajedrez2.BuildGLTexture();
-	t_Ajedrez2.ReleaseImage();
+	text1.LoadBMP("cielo.bmp");
+	text1.BuildGLTexture();
+	text1.ReleaseImage();
 
-	t_madera.LoadBMP("madera2.bmp");
-	t_madera.BuildGLTexture();
-	t_madera.ReleaseImage();
+	text2.LoadBMP("logopumas.bmp");
+	//text2.LoadBMP("hulkcara.bmp");
+	text2.BuildGLTexture();
+	text2.ReleaseImage();
 
-	t_Ajedrez3.LoadTGA ("a3.tga");
-	t_Ajedrez3.BuildGLTexture();
-	t_Ajedrez3.ReleaseImage();
+	text3.LoadTGA("city/arrow.tga");
+	text3.BuildGLTexture();
+	text3.ReleaseImage();
 
+	text4.LoadTGA("city/pavimento.tga");
+	text4.BuildGLTexture();
+	text4.ReleaseImage();
+
+	text5.LoadTGA("city/pasto01.tga");
+	text5.BuildGLTexture();
+	text5.ReleaseImage();
+
+	text6.LoadTGA("city/casa01.tga");
+	text6.BuildGLTexture();
+	text6.ReleaseImage();
+
+	tree.LoadTGA("Tree.tga");
+	tree.BuildGLTexture();
+	tree.ReleaseImage();
+
+	kit._3dsLoad("kitt.3ds");
+	//kit.VertexNormals();
+
+	llanta._3dsLoad("k_rueda.3ds");
+
+
+	objCamera.Position_Camera(0, 2.5f, 3, 0, 2.5f, 0, 0, 1, 0);
+
+	//NEW Crear una lista de dibujo
+	ciudad_display_list = createDL();
+
+	//NEW Iniciar variables de KeyFrames
 	
+
+	//Index empezaba en 5 porque del 1 al 4 ya estan creados, siempre hara esta animacion.
+
+	KeyFrame[0].pulg = 0;
+	KeyFrame[0].Movdedos = 0;
+	KeyFrame[0].Movdedos1 = 0;
+	KeyFrame[0].Movdedos2 = 0;
+	KeyFrame[0].tije = 0;
+	KeyFrame[0].tije1 = 0;
+
+
+	KeyFrame[1].pulg = 3;
+	KeyFrame[1].Movdedos = 0;
+	KeyFrame[1].Movdedos1 = -9;
+	KeyFrame[1].Movdedos2 = -6;
+	KeyFrame[1].tije = -9;
+	KeyFrame[1].tije1 = -6;
+
+
+
+	KeyFrame[2].pulg = 3;
+	KeyFrame[2].Movdedos = 0;
+	KeyFrame[2].Movdedos1 = -9;
+	KeyFrame[2].Movdedos2 = -6;
+	KeyFrame[2].tije = -9;
+	KeyFrame[2].tije1 = -6;
+
+	KeyFrame[3].pulg = -3;
+	KeyFrame[3].Movdedos = 0;
+	KeyFrame[3].Movdedos1 = -9;
+	KeyFrame[3].Movdedos2 = -6;
+	KeyFrame[3].tije = 0.0;
+	KeyFrame[3].tije1 = 0.0;
+
+
+
+	KeyFrame[4].pulg = 3;
+	KeyFrame[4].Movdedos = 0;
+	KeyFrame[4].Movdedos1 = -9;
+	KeyFrame[4].Movdedos2 = -6;
+	KeyFrame[4].tije = 0.0;
+	KeyFrame[4].tije1 = 0.0;
+
+	KeyFrame[5].pulg = 3;
+	KeyFrame[5].Movdedos = 0;
+	KeyFrame[5].Movdedos1 = -9;
+	KeyFrame[5].Movdedos2 = -6;
+	KeyFrame[5].tije = 0.0;
+	KeyFrame[5].tije1 = 0.0;
+
+
+	KeyFrame[6].pulg = 0;
+	KeyFrame[6].Movdedos = 0;
+	KeyFrame[6].Movdedos1 = 0;
+	KeyFrame[6].Movdedos2 = 0;
+	KeyFrame[6].tije = 0.0;
+	KeyFrame[6].tije1 = 0.0;
+
+	KeyFrame[7].pulg = 0.0;
+	KeyFrame[7].Movdedos = 0;
+	KeyFrame[7].Movdedos1 = 0.0;
+	KeyFrame[7].Movdedos2 = 0.0;
+	KeyFrame[7].tije = 0.0;
+	KeyFrame[7].tije1 = 0.0;
+
+	KeyFrame[8].pulg = 0.0;
+	KeyFrame[8].Movdedos = -3;
+	KeyFrame[8].Movdedos1 = -9;
+	KeyFrame[8].Movdedos2 = -6;
+	KeyFrame[8].tije = -9;
+	KeyFrame[8].tije1 = -6;
+
+	KeyFrame[9].pulg = 0.0;
+	KeyFrame[9].Movdedos = -3;
+	KeyFrame[9].Movdedos1 = -9;
+	KeyFrame[9].Movdedos2 = -6;
+	KeyFrame[9].tije = -9;
+	KeyFrame[9].tije1 = -6;
+
+	KeyFrame[10].pulg = 0.0;
+	KeyFrame[10].Movdedos = -3;
+	KeyFrame[10].Movdedos1 = -9;
+	KeyFrame[10].Movdedos2 = -6;
+	KeyFrame[10].tije = -9;
+	KeyFrame[10].tije1 =- 6;
+
+	KeyFrame[11].pulg = 0.0;
+	KeyFrame[11].Movdedos = -3;
+	KeyFrame[11].Movdedos1 = -9;
+	KeyFrame[11].Movdedos2 = -6;
+	KeyFrame[11].tije = -9;
+	KeyFrame[11].tije1 = -6;
+
+	KeyFrame[12].pulg = 0.0;
+	KeyFrame[12].Movdedos = -3;
+	KeyFrame[12].Movdedos1 = -9;
+	KeyFrame[12].Movdedos2 = -6;
+	KeyFrame[12].tije = -9;
+	KeyFrame[12].tije1 = -6;
+
+	KeyFrame[13].pulg = 0.0;
+	KeyFrame[13].Movdedos = -3;
+	KeyFrame[13].Movdedos1 = -9;
+	KeyFrame[13].Movdedos2 = -6;
+	KeyFrame[13].tije = -9;
+	KeyFrame[13].tije1 = -6;
+
+	KeyFrame[14].pulg = 0.0;
+	KeyFrame[14].Movdedos = -3;
+	KeyFrame[14].Movdedos1 = -9;
+	KeyFrame[14].Movdedos2 = -6;
+	KeyFrame[14].tije = -9;
+	KeyFrame[14].tije1 = -6;
+	//NEW//////////////////NEW//////////////////NEW/////////////////l/   // Despues de aqui agregamos los keyframes que queramos cada que se
+	//ejecuta el programa.
 }
 
-
-void renderBitmapCharacter(float x, float y, float z, void *font, char *string)
+void pintaTexto(float x, float y, float z, void *font, char *string)
 {
 
 	char *c;     //Almacena los caracteres a escribir
@@ -82,11 +376,8 @@ void renderBitmapCharacter(float x, float y, float z, void *font, char *string)
 	}
 }
 
-
-
-void prisma(GLuint textura1, GLuint textura2)  //Funcion creacion prisma
+void prisma(void)
 {
-
 	GLfloat vertice[8][3] = {
 		{ 0.5 ,-0.5, 0.5 },    //Coordenadas Vértice 0 V0
 		{ -0.5 ,-0.5, 0.5 },    //Coordenadas Vértice 1 V1
@@ -97,60 +388,58 @@ void prisma(GLuint textura1, GLuint textura2)  //Funcion creacion prisma
 		{ -0.5 ,0.5, -0.5 },    //Coordenadas Vértice 6 V6
 		{ -0.5 ,0.5, 0.5 },    //Coordenadas Vértice 7 V7
 	};
-
-
-	glBindTexture(GL_TEXTURE_2D, textura2);   // choose the texture to use.
+	
 	glBegin(GL_POLYGON);	//Front
-	glColor3f(1.0, 1.0, 1.0);
 	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3fv(vertice[0]);
-	glTexCoord2f(1.0f, 0.0f); glVertex3fv(vertice[4]);
-	glTexCoord2f(1.0f, 1.0f); glVertex3fv(vertice[7]);
-	glTexCoord2f(0.0f, 1.0f); glVertex3fv(vertice[1]);
+	glVertex3fv(vertice[0]);
+	glVertex3fv(vertice[4]);
+	glVertex3fv(vertice[7]);
+	glVertex3fv(vertice[1]);
 	glEnd();
 
 	glBegin(GL_POLYGON);	//Right
 	glNormal3f(1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3fv(vertice[0]);
-	glTexCoord2f(1.0f, 0.0f); glVertex3fv(vertice[3]);
-	glTexCoord2f(1.0f, 1.0f); glVertex3fv(vertice[5]);
-	glTexCoord2f(0.0f, 1.0f); glVertex3fv(vertice[4]);
+	glVertex3fv(vertice[0]);
+	glVertex3fv(vertice[3]);
+	glVertex3fv(vertice[5]);
+	glVertex3fv(vertice[4]);
 	glEnd();
 
 	glBegin(GL_POLYGON);	//Back
 	glNormal3f(0.0f, 0.0f, -1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3fv(vertice[6]);
-	glTexCoord2f(1.0f, 0.0f); glVertex3fv(vertice[5]);
-	glTexCoord2f(1.0f, 1.0f); glVertex3fv(vertice[3]);
-	glTexCoord2f(0.0f, 1.0f); glVertex3fv(vertice[2]);
+	glVertex3fv(vertice[6]);
+	glVertex3fv(vertice[5]);
+	glVertex3fv(vertice[3]);
+	glVertex3fv(vertice[2]);
 	glEnd();
 
 	glBegin(GL_POLYGON);  //Left
 	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3fv(vertice[1]);
-	glTexCoord2f(1.0f, 0.0f); glVertex3fv(vertice[7]);
-	glTexCoord2f(1.0f, 1.0f); glVertex3fv(vertice[6]);
-	glTexCoord2f(0.0f, 1.0f); glVertex3fv(vertice[2]);
+	glVertex3fv(vertice[1]);
+	glVertex3fv(vertice[7]);
+	glVertex3fv(vertice[6]);
+	glVertex3fv(vertice[2]);
 	glEnd();
 
 	glBegin(GL_POLYGON);  //Bottom
 	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3fv(vertice[0]);
-	glTexCoord2f(1.0f, 0.0f); glVertex3fv(vertice[1]);
-	glTexCoord2f(1.0f, 1.0f); glVertex3fv(vertice[2]);
-	glTexCoord2f(0.0f, 1.0f); glVertex3fv(vertice[3]);
+	glVertex3fv(vertice[0]);
+	glVertex3fv(vertice[1]);
+	glVertex3fv(vertice[2]);
+	glVertex3fv(vertice[3]);
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, textura1);   // choose the texture to use.
 	glBegin(GL_POLYGON);  //Top
 	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(4.0, 0.0f); glVertex3fv(vertice[4]);
-	glTexCoord2f(4.0, 4.0f); glVertex3fv(vertice[5]);
-	glTexCoord2f(0.0, 4.0f); glVertex3fv(vertice[6]);
-	glTexCoord2f(0.0f, 0.0f); glVertex3fv(vertice[7]);
+	glVertex3fv(vertice[4]);
+	glVertex3fv(vertice[5]);
+	glVertex3fv(vertice[6]);
+	glVertex3fv(vertice[7]);
 	glEnd();
-}
 
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, ManoDiffuse);
+
+}
 
 void display(void)   // Creamos la funcion donde se dibuja
 {
@@ -158,162 +447,265 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 	glLoadIdentity();
 
-	glPushMatrix();
-	glTranslatef(pos_camX, pos_camY, pos_camZ);
-	glRotatef(eye_camX, 1.0, 0.0, 0.0);
-	glRotatef(eye_camY, 0.0, 1.0, 0.0);
-	glRotatef(eye_camZ, 0.0, 0.0, 1.0);
-
-	//mesa
-	//parte superior
 
 	glPushMatrix();
-	glTranslatef(0, 1, 0);
-	glColor3f(1.0, 1.0, 1.0);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.1);
-	glScalef(4, 0, 4);
-	prisma(t_Ajedrez3.GLindex, t_madera.GLindex);
-	glDisable(GL_ALPHA_TEST);
+
+	glRotatef(g_lookupdown, 1.0f, 0, 0);
+
+	gluLookAt(objCamera.mPos.x, objCamera.mPos.y, objCamera.mPos.z,
+		objCamera.mView.x, objCamera.mView.y, objCamera.mView.z,
+		objCamera.mUp.x, objCamera.mUp.y, objCamera.mUp.z);
+
+
+	glPushMatrix();
+	glPushMatrix(); //Creamos cielo
+	glDisable(GL_LIGHTING);
+	glTranslatef(0, 60, 0);
+	fig1.skybox(130.0, 130.0, 130.0, text1.GLindex);
+	glEnable(GL_LIGHTING);
 	glPopMatrix();
 
-	glPushMatrix();
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(10.0, 2.0, 10.0);
-	prisma(t_madera.GLindex, t_madera.GLindex);
-	glPopMatrix();
-	//patas
-	glPushMatrix();
-	glTranslatef(-3, -5, 4);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(2.0, 8.0, 2.0);
-	prisma(t_madera.GLindex, t_madera.GLindex);
 	glPopMatrix();
 
+	//muñeca
 	glPushMatrix();
-	glTranslatef(3, -5, 4);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(2.0, 8.0, 2.0);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glTranslatef(8.25, 0, 0);
+	glScalef(0.5, 2, 2);
+	glColor3f(0.72, 0.99, 0.89);
+	prisma();
 	glPopMatrix();
-
+	//mano
+	//glRotatef(angMano, 1.0, 0.0, 0.0);
 	glPushMatrix();
-	glTranslatef(3, -5, -4);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(2.0, 8.0, 2.0);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glTranslatef(9.50, 0, 0);
+	glScalef(2, 2, 2);
+	glColor3f(0.05, 0.725, 0.15);
+	prisma();
 	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(-3, -5, -4);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(2.0, 8.0, 2.0);
-	prisma(t_madera.GLindex, t_madera.GLindex);
-	glPopMatrix();
-
-	//silla 1
-
-	glTranslatef(-8, -1, 0);
+	//pulgar1
 
 	glPushMatrix();
-	glTranslatef(0, -2, 0);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(6.0, 1.0, 6.0);
-	prisma(t_madera.GLindex, t_madera.GLindex);
-	glPopMatrix();
 
-	//patas
+	glTranslatef(10.25, 1.25, 0);
+	glScalef(0.4, 0.75, 2);
+	glColor3f(0.05, 0.725, 0.15);
+	prisma();
+	glPopMatrix();
+	//pulgar2
 
 	glPushMatrix();
-	glTranslatef(2.5, -5, 2.5);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 7.0, .5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glRotatef(pulg, 1.0, 0.0, 1.0);
+	glTranslatef(10.25, 1.75, 0);
+	glScalef(0.4, 0.75, 2);
+	glColor3f(0.25, 0.45, 0.65);
+	prisma();
 	glPopMatrix();
+	//indice1
+
+	glRotatef(Movdedos, 1.0, 1.0, 0.0);
+	glPushMatrix();
+	glTranslatef(10.75, 0.90, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.25, 0.45, 0.65);
+	prisma();
+	glPopMatrix();
+	//indice2
 
 	glPushMatrix();
-	glTranslatef(2.5, -5, -2.5);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 7.0, .5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glRotatef(tije, 1.0, 1.0, 0.0);
+
+	glTranslatef(11.25, 0.90, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.15, 0.35, 0.65);
+	prisma();
 	glPopMatrix();
+	//indice3
+	glPushMatrix();
+	glRotatef(tije, 1.0, 1.0, 0.0);
+	glRotatef(tije1, 1.0, 1.0, 0.0);
+
+	glTranslatef(11.75, 0.90, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.80, 0.45, 0.85);
+	prisma();
+	glPopMatrix();
+	//dedo medio
+	glPushMatrix();
+	glTranslatef(10.75, 0.40, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.25, 0.45, 0.65);
+	prisma();
+	glPopMatrix();
+	//dedo medio2
 
 	glPushMatrix();
-	glTranslatef(-2.5, -1, 2.5);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 15.0, .5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
-	glPopMatrix();
+	glRotatef(tije, 1.0, 1.0, 0.0);
 
+	glTranslatef(11.25, 0.40, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.15, 0.35, 0.65);
+	prisma();
+	glPopMatrix();
+	//dedo medio 3
 	glPushMatrix();
-	glTranslatef(-2.5, -1, -2.5);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 15.0, .5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
-	glPopMatrix();
+	glRotatef(tije, 1.0, 1.0, 0.0);
+	glRotatef(tije1, 1.0, 1.0, 0.0);
 
+	glTranslatef(11.75, 0.40, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.80, 0.45, 0.85);
+	prisma();
+	glPopMatrix();
+	//anular1
 	glPushMatrix();
-	glTranslatef(-2.5, 4, 0);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 5, 5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glTranslatef(10.75, -0.2, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.25, 0.45, 0.65);
+	prisma();
 	glPopMatrix();
-
-	//silla 2
-
-	glTranslatef(17, 0, 0);
-
+	//anular2
 	glPushMatrix();
-	glTranslatef(0, -2, 0);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(6.0, 1.0, 6.0);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glRotatef(Movdedos1, 1.0, 1.0, 0.0);
+	glTranslatef(11.25, -0.20, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.15, 0.35, 0.65);
+	prisma();
 	glPopMatrix();
-
+	//anular3
 	glPushMatrix();
-	glTranslatef(2.5, -1, -2.5);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 15.0, .5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glRotatef(Movdedos1, 1.0, 1.0, 0.0);
+	glRotatef(Movdedos2, 1.0, 1.0, 0.0);
+	glTranslatef(11.75, -0.20, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.80, 0.45, 0.85);
+	prisma();
 	glPopMatrix();
-
+	//meñique1
 	glPushMatrix();
-	glTranslatef(2.5, -1, 2.5);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 15.0, .5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glTranslatef(10.75, -0.90, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.25, 0.45, 0.65);
+	prisma();
 	glPopMatrix();
-
+	//meñique2
 	glPushMatrix();
-	glTranslatef(-2.5, -5, 2.5);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 7.0, .5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glRotatef(Movdedos1, 1.0, 1.0, 0.0);
+	glTranslatef(11.25, -0.90, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.15, 0.35, 0.65);
+	prisma();
 	glPopMatrix();
-
+	//meñique3
 	glPushMatrix();
-	glTranslatef(-2.5, -5, -2.5);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 7.0, .5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
+	glRotatef(Movdedos1, 1.0, 1.0, 0.0);
+	glRotatef(Movdedos2, 1.0, 1.0, 0.0);
+	glTranslatef(11.75, -0.90, 0);
+	glScalef(0.5, 0.2, 2);
+	glColor3f(0.80, 0.45, 0.85);
+	prisma();
 	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(2.5, 4, 0);
-	glColor3f(1.0, 1.0, 1.0);
-	glScalef(.5, 5, 5);
-	prisma(t_madera.GLindex, t_madera.GLindex);
-	glPopMatrix();
-
-
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
-	renderBitmapCharacter(-11, 12.0, -14.0, (void *)font, "Practica 8");
-	renderBitmapCharacter(-11, 10.5, -14, (void *)font, "Texturas");
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0, 0.0, 0.0);
+	pintaTexto(-11, 12.0, -14.0, (void *)font, "Practica Mano");
+	pintaTexto(-11, 8.5, -14, (void *)font, s);
+	glColor3f(1.0, 1.0, 1.0);
+	glEnable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 
 	glutSwapBuffers();
 
+}
+
+void animacion()
+{
+	fig3.text_izq -= 0.01;
+	fig3.text_der -= 0.01;
+	if (fig3.text_izq<-1)
+		fig3.text_izq = 0;
+	if (fig3.text_der<0)
+		fig3.text_der = 1;
+
+	//Movimiento del coche
+	if (g_fanimacion)
+	{
+		if (g_avanza)
+		{
+			movKitZ += 1.0;
+			rotTires -= 10;
+			if (movKitZ>130)
+				g_avanza = false;
+		}
+		else
+		{
+			movKitZ -= 1.0;
+			rotTires += 10;
+			if (movKitZ<0)
+				g_avanza = true;
+		}
+	}
+
+
+
+	//Movimiento del monito
+	if (play)
+	{
+
+		if (i_curr_steps >= i_max_steps) //end of animation between frames?
+		{
+			playIndex++;
+			if (playIndex>FrameIndex - 2)	//end of total animation?
+			{
+				printf("termina anim\n");
+				playIndex = 0;
+				play = false;
+			}
+			else //Next frame interpolations
+			{
+				i_curr_steps = 0; //Reset counter
+								  //Interpolation
+
+								  //Interpolaciones incremento.
+								  //el incremento es la distancia entre dos cuadros, el 2 - 1 y se divide entre el 90(i_max_steps)   Se hace la interpolacion
+
+
+				KeyFrame[playIndex].pulgInc = (KeyFrame[playIndex + 1].pulg - KeyFrame[playIndex].pulg) / i_max_steps;
+				KeyFrame[playIndex].dedosInc = (KeyFrame[playIndex + 1].Movdedos - KeyFrame[playIndex].Movdedos) / i_max_steps;
+				KeyFrame[playIndex].dedos1Inc = (KeyFrame[playIndex + 1].Movdedos1 - KeyFrame[playIndex].Movdedos1) / i_max_steps;
+				KeyFrame[playIndex].dedos2Inc = (KeyFrame[playIndex + 1].Movdedos2 - KeyFrame[playIndex].Movdedos2) / i_max_steps;
+
+				KeyFrame[playIndex].tijeInc = (KeyFrame[playIndex + 1].tije - KeyFrame[playIndex].tije) / i_max_steps;
+				KeyFrame[playIndex].tije1Inc = (KeyFrame[playIndex + 1].tije1 - KeyFrame[playIndex].tije1) / i_max_steps;
+
+			}
+		}
+		else
+		{	//Draw information
+
+
+			pulg += KeyFrame[playIndex].pulgInc;
+			Movdedos += KeyFrame[playIndex].dedosInc;
+			Movdedos1 += KeyFrame[playIndex].dedos1Inc;
+			Movdedos2 += KeyFrame[playIndex].dedos2Inc;
+
+			tije += KeyFrame[playIndex].tijeInc;
+			tije1 += KeyFrame[playIndex].tije1Inc;
+
+			i_curr_steps++;
+		}
+
+	}
+
+	frame++;
+	time = glutGet(GLUT_ELAPSED_TIME);
+	if (time - timebase > 1000) {
+		sprintf(s, "FPS:%4.2f", frame*1000.0 / (time - timebase));
+		timebase = time;
+		frame = 0;
+	}
+
+	glutPostRedisplay();
 }
 
 void reshape(int width, int height)   // Creamos funcion Reshape
@@ -330,44 +722,161 @@ void reshape(int width, int height)   // Creamos funcion Reshape
 
 	// Tipo de Vista
 
-	glFrustum(-7.1, 7.1, -7.1, 7.1, 7.1, 50.0);
+	glFrustum(-0.1, 0.1, -0.1, 0.1, 0.1, 170.0);
 
 	glMatrixMode(GL_MODELVIEW);							// Seleccionamos Modelview Matrix
 	glLoadIdentity();
 }
 
-void animacion()
-{
-
-
-	glutPostRedisplay();
-}
-
 void keyboard(unsigned char key, int x, int y)  // Create Keyboard Function
 {
 	switch (key) {
+
 	case 'w':   //Movimientos de camara
 	case 'W':
-		pos_camZ += 0.5f;
-		//eye_camZ -= 0.5f;
+		objCamera.Move_Camera(CAMERASPEED + 0.2);
 		break;
 
 	case 's':
 	case 'S':
-		pos_camZ -= 0.5f;
-		//eye_camZ += 0.5f;
+		objCamera.Move_Camera(-(CAMERASPEED + 0.2));
 		break;
 
 	case 'a':
 	case 'A':
-		pos_camX += 0.5f;
-		//eye_camX -= 0.5f;
+		objCamera.Strafe_Camera(-(CAMERASPEED + 0.4));
 		break;
+
 	case 'd':
 	case 'D':
-		pos_camX -= 0.5f;
-		//eye_camX += 0.5f;
+		objCamera.Strafe_Camera(CAMERASPEED + 0.4);
 		break;
+
+	case 'O':		//  
+	case 'o':
+		g_fanimacion ^= true; //Activamos/desactivamos la animacíon
+		circuito = false;
+		break;
+
+	case 'i':		//  
+	case 'I':
+		circuito ^= true; //Activamos/desactivamos la animacíon
+		g_fanimacion = false;
+		break;
+
+	case 'k':		//
+	case 'K':
+
+
+		break;
+
+	case 'M':
+	case 'm':
+		if (play == false && (FrameIndex>1))
+		{
+
+			pulg = KeyFrame[0].pulg;
+			Movdedos = KeyFrame[0].Movdedos;
+			Movdedos1 = KeyFrame[0].Movdedos1;
+			Movdedos2 = KeyFrame[0].Movdedos2;
+			tije = KeyFrame[0].tije;
+			tije1 = KeyFrame[0].tije1;
+
+			//First Interpolation
+
+
+			KeyFrame[playIndex].pulgInc = (KeyFrame[playIndex + 1].pulg - KeyFrame[playIndex].pulg) / i_max_steps;
+			KeyFrame[playIndex].dedosInc = (KeyFrame[playIndex + 1].Movdedos - KeyFrame[playIndex].Movdedos) / i_max_steps;
+			KeyFrame[playIndex].dedos1Inc = (KeyFrame[playIndex + 1].Movdedos1 - KeyFrame[playIndex].Movdedos1) / i_max_steps;
+			KeyFrame[playIndex].dedos2Inc = (KeyFrame[playIndex + 1].Movdedos2 - KeyFrame[playIndex].Movdedos1) / i_max_steps;
+
+			KeyFrame[playIndex].tijeInc = (KeyFrame[playIndex + 1].tije - KeyFrame[playIndex].tije) / i_max_steps;
+			KeyFrame[playIndex].tije1Inc = (KeyFrame[playIndex + 1].tije1 - KeyFrame[playIndex].tije1) / i_max_steps;
+
+			play = true;
+			playIndex = 0;
+			i_curr_steps = 0;
+		}
+		else
+		{
+			play = false;
+		}
+		break;
+
+
+		break;
+	case 'b':
+		angPulgar += 0.2f;
+		pulg = 0.2f;
+		printf("%f \n", angPulgar);
+		if (angPulgar >= 0) {
+			angPulgar = 0;                  //movimiento del pulgar
+		}
+
+		printf(" pulgar %f \n", angPulgar);
+		break;
+	case 'B':
+		angPulgar -= 0.2f;
+		pulg = 0.2f;
+		printf(" pulgar %f \n", angPulgar);
+		if (angPulgar <= -4) {
+			angPulgar = -4;
+		}
+
+		break;
+	case 'v':
+		Movdedos += 0.2f;
+		printf("articulacion 1 %f \n", Movdedos);
+		if (Movdedos >= 6) {
+			Movdedos = 6;                  //movimiento del hombro
+		}
+
+		printf("articulacion 1 %f \n", Movdedos);
+		break;
+	case 'V':
+		Movdedos -= 0.2f;
+		printf("%f \n", Movdedos);
+		if (Movdedos <= 0) {
+			Movdedos = 0;
+		}
+
+		break;
+		break;
+	case 'c':
+		Movdedos1 += 0.2f;
+		printf("articulacion 2%f \n", Movdedos1);
+		if (Movdedos1 >= 10) {
+			Movdedos1 = 10;                  //movimiento del dedos
+		}
+
+		printf("%f \n", Movdedos1);
+		break;
+	case 'C':
+		Movdedos1 -= 0.2f;
+		printf("articualcion 2 %f \n", Movdedos1);
+		if (Movdedos1 <= 0) {
+			Movdedos1 = 0;
+		}
+
+		break;
+	case 'x':
+		Movdedos2 += 0.2f;
+		printf("articualcion 3 %f \n", Movdedos2);
+		if (Movdedos2 >= 4) {
+			Movdedos2 = 4;                  //movimiento del dedos
+		}
+
+		printf("articulacion 3 %f \n", Movdedos2);
+		break;
+	case 'X':
+		Movdedos2 -= 0.2f;
+		printf("articulacion 3 %f \n", Movdedos2);
+		if (Movdedos2 <= 0) {
+			Movdedos2 = 0;
+		}
+
+		break;
+
 
 	case 27:        // Cuando Esc es presionado...
 		exit(0);   // Salimos del programa
@@ -375,6 +884,7 @@ void keyboard(unsigned char key, int x, int y)  // Create Keyboard Function
 	default:        // Cualquier otra
 		break;
 	}
+
 	glutPostRedisplay();
 }
 
@@ -382,45 +892,49 @@ void arrow_keys(int a_keys, int x, int y)  // Funcion para manejo de teclas espe
 {
 	switch (a_keys) {
 	case GLUT_KEY_PAGE_UP:
-		pos_camY -= 0.5f;
-		//eye_camY += 0.5f;
+		//pos_camY -= 0.5f;
+		//pos_cam.y += 0.5f;
+		//eye_cam.y += 0.5f;
+		objCamera.UpDown_Camera(CAMERASPEED);
 		break;
 
 	case GLUT_KEY_PAGE_DOWN:
-		pos_camY += 0.5f;
-		//eye_camY -= 0.5f;
+		//pos_camY += 0.5f;
+		//pos_cam.y -= 0.5f;
+		//eye_cam.y -= 0.5f;
+		objCamera.UpDown_Camera(-CAMERASPEED);
 		break;
 
 	case GLUT_KEY_UP:     // Presionamos tecla ARRIBA...
-		eye_camX = (eye_camX - 15) % 360;
+		g_lookupdown -= 1.0f;
 		break;
 
 	case GLUT_KEY_DOWN:               // Presionamos tecla ABAJO...
-		eye_camX = (eye_camX + 15) % 360;
+		g_lookupdown += 1.0f;
 		break;
 
 	case GLUT_KEY_LEFT:
-		eye_camY = (eye_camY - 15) % 360;
+		objCamera.Rotate_View(-CAMERASPEED);
 		break;
 
 	case GLUT_KEY_RIGHT:
-		eye_camY = (eye_camY + 15) % 360;
+		objCamera.Rotate_View(CAMERASPEED);
 		break;
+
 	default:
 		break;
 	}
 	glutPostRedisplay();
 }
 
-
 int main(int argc, char** argv)   // Main Function
 {
 	glutInit(&argc, argv); // Inicializamos OpenGL
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH); // Display Mode (Clores RGB y alpha | Buffer Doble )
-	glutInitWindowSize(5000, 5000);	// Tamaño de la Ventana
+	glutInitWindowSize(500, 500);	// Tamaño de la Ventana
 	glutInitWindowPosition(0, 0);	//Posicion de la Ventana
-	glutCreateWindow("Practica 9"); // Nombre de la Ventana
-									//glutFullScreen     ( );         // Full Screen
+	glutCreateWindow("Mano"); // Nombre de la Ventana
+							  //glutFullScreen     ( );         // Full Screen
 	InitGL();						// Parametros iniciales de la aplicacion
 	glutDisplayFunc(display);  //Indicamos a Glut función de dibujo
 	glutReshapeFunc(reshape);	//Indicamos a Glut función en caso de cambio de tamano
@@ -431,4 +945,3 @@ int main(int argc, char** argv)   // Main Function
 
 	return 0;
 }
-

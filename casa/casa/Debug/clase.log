@@ -1,0 +1,13 @@
+﻿  texture.cpp
+  main.cpp
+  figuras.cpp
+c:\users\marco\desktop\magc_clase\clase\clase\figuras.cpp(20): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+c:\users\marco\desktop\magc_clase\clase\clase\figuras.cpp(99): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+c:\users\marco\desktop\magc_clase\clase\clase\figuras.cpp(152): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+c:\users\marco\desktop\magc_clase\clase\clase\figuras.cpp(361): warning C4101: 'theta': unreferenced local variable
+c:\users\marco\desktop\magc_clase\clase\clase\figuras.cpp(361): warning C4101: 'phi': unreferenced local variable
+c:\users\marco\desktop\magc_clase\clase\clase\figuras.cpp(588): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+  Camera.cpp
+  Generating Code...
+  clase.vcxproj -> C:\Users\Marco\Desktop\MAGC_CLASE\clase\Debug\clase.exe
+  clase.vcxproj -> C:\Users\Marco\Desktop\MAGC_CLASE\clase\Debug\clase.pdb (Full PDB)
